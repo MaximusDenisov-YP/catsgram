@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.catsgram.model.Post;
 import ru.yandex.practicum.catsgram.service.PostService;
-import ru.yandex.practicum.catsgram.util.SortOrder;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -25,7 +24,7 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "0") int from
     ) {
-        return postService.findAll(SortOrder.from(sort), size, from);
+        return postService.findAll(sort, size, from);
     }
 
     @GetMapping("/{postId}")

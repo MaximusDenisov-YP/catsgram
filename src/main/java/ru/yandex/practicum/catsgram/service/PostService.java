@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.catsgram.exception.ConditionsNotMetException;
 import ru.yandex.practicum.catsgram.exception.NotFoundException;
+import ru.yandex.practicum.catsgram.exception.ParameterNotValidException;
 import ru.yandex.practicum.catsgram.model.Post;
 import ru.yandex.practicum.catsgram.util.SortOrder;
 
@@ -23,13 +24,24 @@ public class PostService {
     }
 
     public Collection<Post> findAll(
-            SortOrder sort,
+            String sort,
             int size,
             int from
     ) {
+        SortOrder sortOrder = SortOrder.from(sort);
+        if (sortOrder == null) {
+            throw new ParameterNotValidException("sort", "Получено: " + sort + " должно быть: ask или desc");
+        }
+        if (size <= 0) {
+            throw new ParameterNotValidException("size", "Размер должен быть больше нуля");
+        }
+        if (from < 0) {
+            throw new ParameterNotValidException("from", "Начало выборки должно быть положительным числом");
+        }
+
         log.info("\nSortOrder = {} Size = {} From = {}", sort, size, from);
         Comparator<Post> comparator = Comparator.comparing(Post::getId);
-        if (sort == SortOrder.DESCENDING) {
+        if (sortOrder == SortOrder.DESCENDING) {
             comparator = comparator.reversed();
         }
         return posts.values().stream()
